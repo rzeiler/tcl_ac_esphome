@@ -329,12 +329,19 @@ climate::ClimateTraits TCLClimate::traits() {
     climate::CLIMATE_MODE_DRY,
     climate::CLIMATE_MODE_AUTO
   });
+  /* nur 2 erlauben */
+  traits.set_supported_swing_modes({
+    climate::CLIMATE_SWING_OFF,
+    climate::CLIMATE_SWING_VERTICAL
+  });
+  /*
   traits.set_supported_swing_modes({
     climate::CLIMATE_SWING_OFF,
     climate::CLIMATE_SWING_BOTH,
     climate::CLIMATE_SWING_VERTICAL,
     climate::CLIMATE_SWING_HORIZONTAL
   });
+  */
   traits.set_visual_min_temperature(16.0);
   traits.set_visual_max_temperature(31.0);
   traits.set_visual_target_temperature_step(1.0);
