@@ -60,9 +60,9 @@ void TCLClimate::set_swing_mode(climate::ClimateSwingMode swing_mode) {
   const char* swing_str = "";
   switch (swing_mode) {
     case climate::CLIMATE_SWING_OFF: swing_str = "OFF"; break;
-    case climate::CLIMATE_SWING_BOTH: swing_str = "BOTH"; break;
+    /* case climate::CLIMATE_SWING_BOTH: swing_str = "BOTH"; break; */
     case climate::CLIMATE_SWING_VERTICAL: swing_str = "VERTICAL"; break;
-    case climate::CLIMATE_SWING_HORIZONTAL: swing_str = "HORIZONTAL"; break;
+    /* case climate::CLIMATE_SWING_HORIZONTAL: swing_str = "HORIZONTAL"; break; */
     default: swing_str = "UNKNOWN"; break;
   }
   ESP_LOGI("TCL", "Swing mode changed to: %s", swing_str);
