@@ -237,8 +237,8 @@ void TCLClimate::control(const climate::ClimateCall &call) {
             get_cmd_resp.data.power = 0x01;
             switch (climate_mode) {
                 case climate::CLIMATE_MODE_COOL:    get_cmd_resp.data.mode = 0x01; break;
-                case climate::CLIMATE_MODE_DRY:     get_cmd_resp.data.mode = 0x02; break;
-                case climate::CLIMATE_MODE_FAN_ONLY:get_cmd_resp.data.mode = 0x03; break;
+                case climate::CLIMATE_MODE_DRY:     get_cmd_resp.data.mode = 0x03; break;
+                case climate::CLIMATE_MODE_FAN_ONLY:get_cmd_resp.data.mode = 0x02; break;
                 case climate::CLIMATE_MODE_HEAT:
                 case climate::CLIMATE_MODE_HEAT_COOL:get_cmd_resp.data.mode = 0x04; break;
                 case climate::CLIMATE_MODE_AUTO:    get_cmd_resp.data.mode = 0x05; break;
@@ -305,11 +305,8 @@ void TCLClimate::control(const climate::ClimateCall &call) {
         static const std::map<std::string, std::pair<uint8_t, uint8_t>> FAN_MODE_MAP = {
             {"Turbo",      {0x03, 0x01}},
             {"Mute",       {0x01, 0x01}},
-            {"Automatic",  {0x00, 0x00}},
             {"1",          {0x01, 0x00}},
-            {"2",          {0x04, 0x00}},
             {"3",          {0x02, 0x00}},
-            {"4",          {0x05, 0x00}},
             {"5",          {0x03, 0x00}}
         };
 
@@ -437,8 +434,8 @@ void TCLClimate::loop() {
                 } else {
                     static const std::map<uint8_t, climate::ClimateMode> MODE_MAP = {
                         {0x01, climate::CLIMATE_MODE_COOL},
-                        {0x03, climate::CLIMATE_MODE_DRY},
-                        {0x02, climate::CLIMATE_MODE_FAN_ONLY},
+                        {0x02, climate::CLIMATE_MODE_DRY},
+                        {0x03, climate::CLIMATE_MODE_FAN_ONLY},
                         {0x04, climate::CLIMATE_MODE_HEAT},
                         {0x05, climate::CLIMATE_MODE_AUTO}
                     };
