@@ -190,6 +190,8 @@ void TCLClimate::control_vertical_swing(const std::string &swing_mode) {
   else if (swing_mode == "Fix lower") get_cmd_resp.data.vswing_fix = 0x04;
   else if (swing_mode == "Fix bottom") get_cmd_resp.data.vswing_fix = 0x05;
 
+  if (swing_mode == "VERTICAL") get_cmd_resp.data.vswing_mv = 0x01;
+
   if (get_cmd_resp.data.vswing_mv) get_cmd_resp.data.vswing = 0x01;
   else get_cmd_resp.data.vswing = 0;
 
