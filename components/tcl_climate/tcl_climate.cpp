@@ -192,7 +192,7 @@ void TCLClimate::control_vertical_swing(const std::string &swing_mode) {
 
   if (swing_mode == "VERTICAL") get_cmd_resp.data.vswing_mv = 0x01;
 
-  ESP_LOGI("TCL", "control_vertical_swing: %s %s", swing_mode, get_cmd_resp.data.vswing_mv.c_str());
+  ESP_LOGI("TCL", "control_vertical_swing: %s %d", swing_mode.c_str(), get_cmd_resp.data.vswing_mv);
 
   if (get_cmd_resp.data.vswing_mv) get_cmd_resp.data.vswing = 0x01;
   else get_cmd_resp.data.vswing = 0;
