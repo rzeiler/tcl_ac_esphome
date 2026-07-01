@@ -280,6 +280,9 @@ void TCLClimate::control(const climate::ClimateCall &call) {
             case climate::CLIMATE_SWING_VERTICAL:
                 get_cmd_resp.data.hswing = 0;
                 get_cmd_resp.data.vswing = 1;
+
+                get_cmd_resp.data.vswing_mv = 0x01;
+
                 break;
             case climate::CLIMATE_SWING_HORIZONTAL:
                 get_cmd_resp.data.hswing = 1;
