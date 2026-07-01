@@ -137,13 +137,30 @@ void TCLClimate::build_set_cmd(get_cmd_resp_t *get_cmd_resp) {
     }
 
     // Swing control - extracted from old code
+    /*
     if (get_cmd_resp->data.vswing_mv) {
-      m_set_cmd.data.vswing = 0x06;
+      m_set_cmd.data.vswing = 0x07;
       m_set_cmd.data.vswing_fix = 0;
       m_set_cmd.data.vswing_mv = get_cmd_resp->data.vswing_mv;
     } else if (get_cmd_resp->data.vswing_fix) {
-      m_set_cmd.data.vswing = 0x00;
+      m_set_cmd.data.vswing = 0;
       m_set_cmd.data.vswing_fix = get_cmd_resp->data.vswing_fix;
+      m_set_cmd.data.vswing_mv = 0;
+    }
+    */
+   
+    if (get_cmd_resp->data.vswing_mv > 0) {
+      m_set_cmd.data.vswing = 0x07; // Vertikal-Swing aktiv
+      m_set_cmd.data.vswing_fix = 0;
+      m_set_cmd.data.vswing_mv = get_cmd_resp->data.vswing_mv;
+    } else if (get_cmd_resp->data.vswing_fix > 0) {
+      m_set_cmd.data.vswing = 0;    // Kein Swing-Modus (fest)
+      m_set_cmd.data.vswing_fix = get_cmd_resp->data.vswing_fix;
+      m_set_cmd.data.vswing_mv = 0;
+    } else {
+      // EXPLIZIT: Wenn beides 0 ist, müssen wir die AC anweisen, den Swing zu stoppen
+      m_set_cmd.data.vswing = 0;
+      m_set_cmd.data.vswing_fix = 0;
       m_set_cmd.data.vswing_mv = 0;
     }
 
@@ -263,6 +280,10 @@ void TCLClimate::control(const climate::ClimateCall &call) {
             case climate::CLIMATE_SWING_OFF:
                 get_cmd_resp.data.hswing = 0;
                 get_cmd_resp.data.vswing = 0;
+
+                get_cmd_resp.data.vswing_mv = 0; 
+                get_cmd_resp.data.vswing_fix = 0;
+
                 break;
             case climate::CLIMATE_SWING_BOTH:
                 get_cmd_resp.data.hswing = 1;
