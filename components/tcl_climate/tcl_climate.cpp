@@ -137,9 +137,9 @@ void TCLClimate::build_set_cmd(get_cmd_resp_t *get_cmd_resp) {
     }
 
     // Swing control - extracted from old code
-    /*
+   
     if (get_cmd_resp->data.vswing_mv) {
-      m_set_cmd.data.vswing = 0x07;
+      m_set_cmd.data.vswing = 0x01;
       m_set_cmd.data.vswing_fix = 0;
       m_set_cmd.data.vswing_mv = get_cmd_resp->data.vswing_mv;
     } else if (get_cmd_resp->data.vswing_fix) {
@@ -147,8 +147,8 @@ void TCLClimate::build_set_cmd(get_cmd_resp_t *get_cmd_resp) {
       m_set_cmd.data.vswing_fix = get_cmd_resp->data.vswing_fix;
       m_set_cmd.data.vswing_mv = 0;
     }
-    */
    
+    /*
     if (get_cmd_resp->data.vswing_mv > 0) {
       m_set_cmd.data.vswing = 0x07; // Vertikal-Swing aktiv
       m_set_cmd.data.vswing_fix = 0;
@@ -163,6 +163,7 @@ void TCLClimate::build_set_cmd(get_cmd_resp_t *get_cmd_resp) {
       m_set_cmd.data.vswing_fix = 0;
       m_set_cmd.data.vswing_mv = 0;
     }
+    */
 
     if (get_cmd_resp->data.hswing_mv) {
       m_set_cmd.data.hswing = 0x01;
@@ -186,7 +187,8 @@ void TCLClimate::build_set_cmd(get_cmd_resp_t *get_cmd_resp) {
 
 void TCLClimate::setup() {
   set_update_interval(UPDATE_INTERVAL_MS);
-  this->set_supported_custom_fan_modes({"Turbo", "Mute", "Automatic", "1", "2", "3", "4", "5"});
+  // this->set_supported_custom_fan_modes({"Turbo", "Mute", "Automatic", "1", "2", "3", "4", "5"});
+  this->set_supported_custom_fan_modes({"Turbo", "Mute", "1", "3", "5"});
 }
 
 // Swing control methods from old code
@@ -273,6 +275,7 @@ void TCLClimate::control(const climate::ClimateCall &call) {
         should_build_cmd = true;
     }
 
+    /*
     if (call.get_swing_mode().has_value()) {
         climate::ClimateSwingMode swing_mode = *call.get_swing_mode();
 
@@ -296,6 +299,28 @@ void TCLClimate::control(const climate::ClimateCall &call) {
             case climate::CLIMATE_SWING_HORIZONTAL:
                 get_cmd_resp.data.hswing = 1;
                 get_cmd_resp.data.vswing = 0;
+                break;
+        }
+        should_build_cmd = true;
+    }
+    */
+
+    if (call.get_swing_mode().has_value()) {
+        climate::ClimateSwingMode swing_mode = *call.get_swing_mode();
+
+        switch(swing_mode) {
+            case climate::CLIMATE_SWING_OFF:
+                get_cmd_resp.data.vswing = 0;
+                get_cmd_resp.data.vswing_mv = 0;   // Swing Bewegung aus
+                get_cmd_resp.data.vswing_fix = 0;  // Fixierte Position aus
+                break;
+            case climate::CLIMATE_SWING_VERTICAL:
+                get_cmd_resp.data.vswing = 1;
+                get_cmd_resp.data.vswing_mv = 0x01; // "Move full" entsprechend Ihrer logs
+                get_cmd_resp.data.vswing_fix = 0;   // Muss 0 sein, wenn MV aktiv ist
+                break;
+            default:
+                // Andere Modi wie Horizontal oder Both ggf. hier behandeln
                 break;
         }
         should_build_cmd = true;
@@ -359,19 +384,10 @@ climate::ClimateTraits TCLClimate::traits() {
     climate::CLIMATE_MODE_DRY,
     climate::CLIMATE_MODE_AUTO
   });
-  /* nur 2 erlauben */
   traits.set_supported_swing_modes({
     climate::CLIMATE_SWING_OFF,
     climate::CLIMATE_SWING_VERTICAL
   });
-  /*
-  traits.set_supported_swing_modes({
-    climate::CLIMATE_SWING_OFF,
-    climate::CLIMATE_SWING_BOTH,
-    climate::CLIMATE_SWING_VERTICAL,
-    climate::CLIMATE_SWING_HORIZONTAL
-  });
-  */
   traits.set_visual_min_temperature(16.0);
   traits.set_visual_max_temperature(31.0);
   traits.set_visual_target_temperature_step(1.0);
