@@ -137,31 +137,15 @@ void TCLClimate::build_set_cmd(get_cmd_resp_t *get_cmd_resp) {
     }
 
     // Swing control - extracted from old code
-   
-    if (get_cmd_resp->data.vswing_mv == 0x01) {
-        m_set_cmd.data.vswing = 0x01; // Das Flag, das Aktivierung signalisiert
-        m_set_cmd.data.vswing_mv = 0x01;
-    } else {
-        m_set_cmd.data.vswing = 0x00;
-        m_set_cmd.data.vswing_mv = 0x00;
-    }
-   
-    /*
-    if (get_cmd_resp->data.vswing_mv > 0) {
-      m_set_cmd.data.vswing = 0x07; // Vertikal-Swing aktiv
+    if (get_cmd_resp->data.vswing_mv) {
+      m_set_cmd.data.vswing = 0x07;
       m_set_cmd.data.vswing_fix = 0;
       m_set_cmd.data.vswing_mv = get_cmd_resp->data.vswing_mv;
-    } else if (get_cmd_resp->data.vswing_fix > 0) {
-      m_set_cmd.data.vswing = 0;    // Kein Swing-Modus (fest)
+    } else if (get_cmd_resp->data.vswing_fix) {
+      m_set_cmd.data.vswing = 0;
       m_set_cmd.data.vswing_fix = get_cmd_resp->data.vswing_fix;
       m_set_cmd.data.vswing_mv = 0;
-    } else {
-      // EXPLIZIT: Wenn beides 0 ist, müssen wir die AC anweisen, den Swing zu stoppen
-      m_set_cmd.data.vswing = 0;
-      m_set_cmd.data.vswing_fix = 0;
-      m_set_cmd.data.vswing_mv = 0;
     }
-    */
 
     if (get_cmd_resp->data.hswing_mv) {
       m_set_cmd.data.hswing = 0x01;
@@ -188,27 +172,6 @@ void TCLClimate::setup() {
   this->set_supported_custom_fan_modes({"Turbo", "Mute", "1", "3", "5"});
 }
 
-void TCLClimate::control_vertical_swing(const std::string &swing_mode) {
-  get_cmd_resp_t get_cmd_resp = {0};
-  memcpy(get_cmd_resp.raw, m_get_cmd_resp.raw, sizeof(get_cmd_resp.raw));
-
-  // Alles auf Null setzen, um einen definierten Zustand zu haben
-  get_cmd_resp.data.vswing_mv = 0;
-  get_cmd_resp.data.vswing_fix = 0;
-  get_cmd_resp.data.vswing = 0;
-
-  // Nur die zwei Zustände behandeln, die Sie in Ihren Logs sehen
-  if (swing_mode == "Move full") {
-    get_cmd_resp.data.vswing = 1;
-    get_cmd_resp.data.vswing_mv = 0x01; 
-  } 
-  // Wenn es nicht "Move full" ist, bleibt alles auf 0 (entspricht "OFF")
-
-  build_set_cmd(&get_cmd_resp);
-  ready_to_send_set_cmd_flag = true;
-}
-
-/*
 // Swing control methods from old code
 void TCLClimate::control_vertical_swing(const std::string &swing_mode) {
 
@@ -233,7 +196,7 @@ void TCLClimate::control_vertical_swing(const std::string &swing_mode) {
   build_set_cmd(&get_cmd_resp);
   ready_to_send_set_cmd_flag = true;
 }
-  */
+ 
 
 void TCLClimate::control_horizontal_swing(const std::string &swing_mode) {
 
