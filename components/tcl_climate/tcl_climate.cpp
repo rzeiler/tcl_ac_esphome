@@ -237,8 +237,8 @@ void TCLClimate::control(const climate::ClimateCall &call) {
             get_cmd_resp.data.power = 0x01;
             switch (climate_mode) {
                 case climate::CLIMATE_MODE_COOL:    get_cmd_resp.data.mode = 0x01; break;
-                case climate::CLIMATE_MODE_DRY:     get_cmd_resp.data.mode = 0x03; break;
-                case climate::CLIMATE_MODE_FAN_ONLY:get_cmd_resp.data.mode = 0x02; break;
+                case climate::CLIMATE_MODE_DRY:     get_cmd_resp.data.mode = 0x02; break;
+                case climate::CLIMATE_MODE_FAN_ONLY:get_cmd_resp.data.mode = 0x03; break;
                 case climate::CLIMATE_MODE_HEAT:
                 case climate::CLIMATE_MODE_HEAT_COOL:get_cmd_resp.data.mode = 0x04; break;
                 case climate::CLIMATE_MODE_AUTO:    get_cmd_resp.data.mode = 0x05; break;
