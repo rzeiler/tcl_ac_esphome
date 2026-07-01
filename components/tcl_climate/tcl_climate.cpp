@@ -290,6 +290,7 @@ void TCLClimate::control(const climate::ClimateCall &call) {
         get_cmd_resp.data.mute = 0x00;
 
         // Use map for fan mode parsing
+        /*
         static const std::map<std::string, std::pair<uint8_t, uint8_t>> FAN_MODE_MAP = {
             {"Turbo",      {0x03, 0x01}},
             {"Mute",       {0x01, 0x01}},
@@ -300,8 +301,7 @@ void TCLClimate::control(const climate::ClimateCall &call) {
             {"4",          {0x05, 0x00}},
             {"5",          {0x03, 0x00}}
         };
-
-         // Use map for fan mode parsing
+        */
         static const std::map<std::string, std::pair<uint8_t, uint8_t>> FAN_MODE_MAP = {
             {"Turbo",      {0x03, 0x01}},
             {"Mute",       {0x01, 0x01}},
