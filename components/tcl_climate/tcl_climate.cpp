@@ -187,10 +187,30 @@ void TCLClimate::build_set_cmd(get_cmd_resp_t *get_cmd_resp) {
 
 void TCLClimate::setup() {
   set_update_interval(UPDATE_INTERVAL_MS);
-  // this->set_supported_custom_fan_modes({"Turbo", "Mute", "Automatic", "1", "2", "3", "4", "5"});
   this->set_supported_custom_fan_modes({"Turbo", "Mute", "1", "3", "5"});
 }
 
+void TCLClimate::control_vertical_swing(const std::string &swing_mode) {
+  get_cmd_resp_t get_cmd_resp = {0};
+  memcpy(get_cmd_resp.raw, m_get_cmd_resp.raw, sizeof(get_cmd_resp.raw));
+
+  // Alles auf Null setzen, um einen definierten Zustand zu haben
+  get_cmd_resp.data.vswing_mv = 0;
+  get_cmd_resp.data.vswing_fix = 0;
+  get_cmd_resp.data.vswing = 0;
+
+  // Nur die zwei Zustände behandeln, die Sie in Ihren Logs sehen
+  if (swing_mode == "Move full") {
+    get_cmd_resp.data.vswing = 1;
+    get_cmd_resp.data.vswing_mv = 0x01; 
+  } 
+  // Wenn es nicht "Move full" ist, bleibt alles auf 0 (entspricht "OFF")
+
+  build_set_cmd(&get_cmd_resp);
+  ready_to_send_set_cmd_flag = true;
+}
+
+/*
 // Swing control methods from old code
 void TCLClimate::control_vertical_swing(const std::string &swing_mode) {
 
@@ -215,6 +235,7 @@ void TCLClimate::control_vertical_swing(const std::string &swing_mode) {
   build_set_cmd(&get_cmd_resp);
   ready_to_send_set_cmd_flag = true;
 }
+  */
 
 void TCLClimate::control_horizontal_swing(const std::string &swing_mode) {
 
