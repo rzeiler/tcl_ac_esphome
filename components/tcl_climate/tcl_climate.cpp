@@ -293,8 +293,7 @@ void TCLClimate::control(const climate::ClimateCall &call) {
         get_cmd_resp.data.temp = static_cast<uint8_t>(temp) - 16;
         should_build_cmd = true;
     }
-
-    /*
+    
     if (call.get_swing_mode().has_value()) {
         climate::ClimateSwingMode swing_mode = *call.get_swing_mode();
 
@@ -322,17 +321,6 @@ void TCLClimate::control(const climate::ClimateCall &call) {
         }
         should_build_cmd = true;
     }
-    */
-
-    if (call.get_swing_mode().has_value()) {
-        climate::ClimateSwingMode swing_mode = *call.get_swing_mode();
-        if (swing_mode == climate::CLIMATE_SWING_VERTICAL) {
-            control_vertical_swing("Move full");
-        } else {
-            control_vertical_swing("OFF");
-        }
-        should_build_cmd = true;
-    }
 
     // Updated custom fan mode handling
     StringRef custom_fan_mode(call.get_custom_fan_mode());
@@ -344,18 +332,6 @@ void TCLClimate::control(const climate::ClimateCall &call) {
         get_cmd_resp.data.mute = 0x00;
 
         // Use map for fan mode parsing
-        /*
-        static const std::map<std::string, std::pair<uint8_t, uint8_t>> FAN_MODE_MAP = {
-            {"Turbo",      {0x03, 0x01}},
-            {"Mute",       {0x01, 0x01}},
-            {"Automatic",  {0x00, 0x00}},
-            {"1",          {0x01, 0x00}},
-            {"2",          {0x04, 0x00}},
-            {"3",          {0x02, 0x00}},
-            {"4",          {0x05, 0x00}},
-            {"5",          {0x03, 0x00}}
-        };
-        */
         static const std::map<std::string, std::pair<uint8_t, uint8_t>> FAN_MODE_MAP = {
             {"Turbo",      {0x03, 0x01}},
             {"Mute",       {0x01, 0x01}},
