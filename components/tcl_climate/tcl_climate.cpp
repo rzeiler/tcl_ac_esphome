@@ -138,14 +138,12 @@ void TCLClimate::build_set_cmd(get_cmd_resp_t *get_cmd_resp) {
 
     // Swing control - extracted from old code
    
-    if (get_cmd_resp->data.vswing_mv) {
-      m_set_cmd.data.vswing = 0x01;
-      m_set_cmd.data.vswing_fix = 0;
-      m_set_cmd.data.vswing_mv = get_cmd_resp->data.vswing_mv;
-    } else if (get_cmd_resp->data.vswing_fix) {
-      m_set_cmd.data.vswing = 0;
-      m_set_cmd.data.vswing_fix = get_cmd_resp->data.vswing_fix;
-      m_set_cmd.data.vswing_mv = 0;
+    if (get_cmd_resp->data.vswing_mv == 0x01) {
+        m_set_cmd.data.vswing = 0x01; // Das Flag, das Aktivierung signalisiert
+        m_set_cmd.data.vswing_mv = 0x01;
+    } else {
+        m_set_cmd.data.vswing = 0x00;
+        m_set_cmd.data.vswing_mv = 0x00;
     }
    
     /*
