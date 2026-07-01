@@ -60,9 +60,7 @@ void TCLClimate::set_swing_mode(climate::ClimateSwingMode swing_mode) {
   const char* swing_str = "";
   switch (swing_mode) {
     case climate::CLIMATE_SWING_OFF: swing_str = "OFF"; break;
-    case climate::CLIMATE_SWING_BOTH: swing_str = "BOTH"; break;
     case climate::CLIMATE_SWING_VERTICAL: swing_str = "VERTICAL"; break;
-    case climate::CLIMATE_SWING_HORIZONTAL: swing_str = "HORIZONTAL"; break;
     default: swing_str = "UNKNOWN"; break;
   }
   ESP_LOGI("TCL", "Swing mode changed to: %s", swing_str);
@@ -190,10 +188,6 @@ void TCLClimate::control_vertical_swing(const std::string &swing_mode) {
   else if (swing_mode == "Fix lower") get_cmd_resp.data.vswing_fix = 0x04;
   else if (swing_mode == "Fix bottom") get_cmd_resp.data.vswing_fix = 0x05;
 
-  if (swing_mode == "VERTICAL") get_cmd_resp.data.vswing_mv = 0x01;
-
-  ESP_LOGI("TCL", "control_vertical_swing: %s %d", swing_mode.c_str(), get_cmd_resp.data.vswing_mv);
-
   if (get_cmd_resp.data.vswing_mv) get_cmd_resp.data.vswing = 0x01;
   else get_cmd_resp.data.vswing = 0;
 
@@ -264,31 +258,17 @@ void TCLClimate::control(const climate::ClimateCall &call) {
     if (call.get_swing_mode().has_value()) {
         climate::ClimateSwingMode swing_mode = *call.get_swing_mode();
 
-        ESP_LOGI("TCL", "control_vertical_swing has_value: %d", get_cmd_resp.data.vswing_mv);
-
         switch(swing_mode) {
             case climate::CLIMATE_SWING_OFF:
                 get_cmd_resp.data.hswing = 0;
                 get_cmd_resp.data.vswing = 0;
-
                 get_cmd_resp.data.vswing_mv = 0; 
                 get_cmd_resp.data.vswing_fix = 0;
-
-                break;
-            case climate::CLIMATE_SWING_BOTH:
-                get_cmd_resp.data.hswing = 1;
-                get_cmd_resp.data.vswing = 1;
                 break;
             case climate::CLIMATE_SWING_VERTICAL:
                 get_cmd_resp.data.hswing = 0;
                 get_cmd_resp.data.vswing = 1;
-
                 get_cmd_resp.data.vswing_mv = 0x01;
-
-                break;
-            case climate::CLIMATE_SWING_HORIZONTAL:
-                get_cmd_resp.data.hswing = 1;
-                get_cmd_resp.data.vswing = 0;
                 break;
         }
         should_build_cmd = true;
