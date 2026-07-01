@@ -264,6 +264,8 @@ void TCLClimate::control(const climate::ClimateCall &call) {
     if (call.get_swing_mode().has_value()) {
         climate::ClimateSwingMode swing_mode = *call.get_swing_mode();
 
+        ESP_LOGI("TCL", "control_vertical_swing has_value: %s %d", swing_mode.c_str(), get_cmd_resp.data.vswing_mv);
+
         switch(swing_mode) {
             case climate::CLIMATE_SWING_OFF:
                 get_cmd_resp.data.hswing = 0;
