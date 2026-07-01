@@ -392,9 +392,11 @@ climate::ClimateTraits TCLClimate::traits() {
     climate::CLIMATE_MODE_DRY,
     climate::CLIMATE_MODE_AUTO
   });
-  traits.set_supported_swing_modes({
+   traits.set_supported_swing_modes({
     climate::CLIMATE_SWING_OFF,
-    climate::CLIMATE_SWING_VERTICAL
+    climate::CLIMATE_SWING_BOTH,
+    climate::CLIMATE_SWING_VERTICAL,
+    climate::CLIMATE_SWING_HORIZONTAL
   });
   traits.set_visual_min_temperature(16.0);
   traits.set_visual_max_temperature(31.0);
@@ -529,28 +531,38 @@ void TCLClimate::loop() {
                     this->set_swing_mode(climate::CLIMATE_SWING_HORIZONTAL);
                 }
 
+               // Set swing mode - extracted from old code
+                if (m_get_cmd_resp.data.hswing && m_get_cmd_resp.data.vswing) {
+                    this->set_swing_mode(climate::CLIMATE_SWING_BOTH);
+                } else if (!m_get_cmd_resp.data.hswing && !m_get_cmd_resp.data.vswing) {
+                    this->set_swing_mode(climate::CLIMATE_SWING_OFF);
+                } else if (m_get_cmd_resp.data.vswing) {
+                    this->set_swing_mode(climate::CLIMATE_SWING_VERTICAL);
+                } else if (m_get_cmd_resp.data.hswing) {
+                    this->set_swing_mode(climate::CLIMATE_SWING_HORIZONTAL);
+                }
+
                 // Set swing positions - extracted from old code
                 if (m_get_cmd_resp.data.vswing_mv == 0x01) set_vswing_pos("Move full");
-                //else if (m_get_cmd_resp.data.vswing_mv == 0x02) set_vswing_pos("Move upper");
-                //else if (m_get_cmd_resp.data.vswing_mv == 0x03) set_vswing_pos("Move lower");
-                //else if (m_get_cmd_resp.data.vswing_fix == 0x01) set_vswing_pos("Fix top");
-                //else if (m_get_cmd_resp.data.vswing_fix == 0x02) set_vswing_pos("Fix upper");
-                //else if (m_get_cmd_resp.data.vswing_fix == 0x03) set_vswing_pos("Fix mid");
-                //else if (m_get_cmd_resp.data.vswing_fix == 0x04) set_vswing_pos("Fix lower");
-                //else if (m_get_cmd_resp.data.vswing_fix == 0x05) set_vswing_pos("Fix bottom");
+                else if (m_get_cmd_resp.data.vswing_mv == 0x02) set_vswing_pos("Move upper");
+                else if (m_get_cmd_resp.data.vswing_mv == 0x03) set_vswing_pos("Move lower");
+                else if (m_get_cmd_resp.data.vswing_fix == 0x01) set_vswing_pos("Fix top");
+                else if (m_get_cmd_resp.data.vswing_fix == 0x02) set_vswing_pos("Fix upper");
+                else if (m_get_cmd_resp.data.vswing_fix == 0x03) set_vswing_pos("Fix mid");
+                else if (m_get_cmd_resp.data.vswing_fix == 0x04) set_vswing_pos("Fix lower");
+                else if (m_get_cmd_resp.data.vswing_fix == 0x05) set_vswing_pos("Fix bottom");
                 else set_vswing_pos("Last position");
 
-                //if (m_get_cmd_resp.data.hswing_mv == 0x01) set_hswing_pos("Move full");
-                //else if (m_get_cmd_resp.data.hswing_mv == 0x02) set_hswing_pos("Move left");
-                //else if (m_get_cmd_resp.data.hswing_mv == 0x03) set_hswing_pos("Move mid");
-                //else if (m_get_cmd_resp.data.hswing_mv == 0x04) set_hswing_pos("Move right");
-                //else if (m_get_cmd_resp.data.hswing_fix == 0x01) set_hswing_pos("Fix left");
-                //else if (m_get_cmd_resp.data.hswing_fix == 0x02) set_hswing_pos("Fix mid left");
-                //else if (m_get_cmd_resp.data.hswing_fix == 0x03) set_hswing_pos("Fix mid");
-                //else if (m_get_cmd_resp.data.hswing_fix == 0x04) set_hswing_pos("Fix mid right");
-                //else if (m_get_cmd_resp.data.hswing_fix == 0x05) set_hswing_pos("Fix right");
-                //else set_hswing_pos("Last position");
-                //set_hswing_pos("Last position");
+                if (m_get_cmd_resp.data.hswing_mv == 0x01) set_hswing_pos("Move full");
+                else if (m_get_cmd_resp.data.hswing_mv == 0x02) set_hswing_pos("Move left");
+                else if (m_get_cmd_resp.data.hswing_mv == 0x03) set_hswing_pos("Move mid");
+                else if (m_get_cmd_resp.data.hswing_mv == 0x04) set_hswing_pos("Move right");
+                else if (m_get_cmd_resp.data.hswing_fix == 0x01) set_hswing_pos("Fix left");
+                else if (m_get_cmd_resp.data.hswing_fix == 0x02) set_hswing_pos("Fix mid left");
+                else if (m_get_cmd_resp.data.hswing_fix == 0x03) set_hswing_pos("Fix mid");
+                else if (m_get_cmd_resp.data.hswing_fix == 0x04) set_hswing_pos("Fix mid right");
+                else if (m_get_cmd_resp.data.hswing_fix == 0x05) set_hswing_pos("Fix right");
+                else set_hswing_pos("Last position");
 
                 this->set_target_temperature(static_cast<float>(m_get_cmd_resp.data.temp + 16));
                 this->set_current_temperature(curr_temp);
