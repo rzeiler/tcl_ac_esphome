@@ -328,21 +328,10 @@ void TCLClimate::control(const climate::ClimateCall &call) {
 
     if (call.get_swing_mode().has_value()) {
         climate::ClimateSwingMode swing_mode = *call.get_swing_mode();
-
-        switch(swing_mode) {
-            case climate::CLIMATE_SWING_OFF:
-                get_cmd_resp.data.vswing = 0;
-                get_cmd_resp.data.vswing_mv = 0;   // Swing Bewegung aus
-                get_cmd_resp.data.vswing_fix = 0;  // Fixierte Position aus
-                break;
-            case climate::CLIMATE_SWING_VERTICAL:
-                get_cmd_resp.data.vswing = 1;
-                get_cmd_resp.data.vswing_mv = 0x01; // "Move full" entsprechend Ihrer logs
-                get_cmd_resp.data.vswing_fix = 0;   // Muss 0 sein, wenn MV aktiv ist
-                break;
-            default:
-                // Andere Modi wie Horizontal oder Both ggf. hier behandeln
-                break;
+        if (swing_mode == climate::CLIMATE_SWING_VERTICAL) {
+            control_vertical_swing("Move full");
+        } else {
+            control_vertical_swing("OFF");
         }
         should_build_cmd = true;
     }
